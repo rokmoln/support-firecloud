@@ -28,6 +28,13 @@ case $(uname -s) in
             </dev/null /bin/bash -c "$(curl -fqsS -L ${RAW_GUC_URL}/Homebrew/install/master/install.sh)"
             echo_done
         fi
+        (
+            cd $(brew --repository)
+            exe git fetch origin refs/tags/2.4.3:refs/tags/2.4.3
+            exe git checkout 2.4.3
+            exe brew info --json=v1 --installed
+            exit 1
+        )
 
         CI_CACHE_HOMEBREW_PREFIX=~/.homebrew
         ;;
