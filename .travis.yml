@@ -12,6 +12,7 @@ branches:
     - master
     - /^v(\d+)\.(\d+)\.(\d+)/ # version tags
     - wsl
+    - debug-brew-mercurial
 
 # 4. Bootstrap
 # os: linux
