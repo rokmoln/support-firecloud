@@ -21,7 +21,7 @@ case $(uname -s) in
     Darwin)
         if [[ "${HAS_BREW_2}" = "true" ]]; then
             echo_do "brew: Updating homebrew..."
-            brew update
+            brew update >/dev/null
             echo_done
         else
             echo_do "brew: Installing homebrew..."
@@ -41,7 +41,7 @@ case $(uname -s) in
     Linux)
         if [[ "${HAS_BREW_2}" = "true" ]]; then
             echo_do "brew: Updating linuxbrew..."
-            brew update
+            brew update >/dev/null
             echo_done
         else
             echo_do "brew: Installing linuxbrew..."
