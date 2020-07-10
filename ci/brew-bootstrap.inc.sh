@@ -30,8 +30,8 @@ case $(uname -s) in
         fi
         (
             cd $(brew --repository)
-            exe git fetch origin refs/tags/2.4.3:refs/tags/2.4.3
-            exe git checkout 2.4.3
+            exe git fetch origin refs/tags/2.4.4:refs/tags/2.4.4
+            exe git checkout 2.4.4
             exe brew info --json=v1 --installed
             exit 1
         )
