@@ -7,7 +7,7 @@ export HOMEBREW_NO_INSTALL_CLEANUP=1
 
 function brew_update() {
     echo_do "brew: Updating..."
-    brew update
+    brew update >/dev/null
     brew outdated
     echo_done
 }
