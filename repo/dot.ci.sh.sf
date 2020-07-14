@@ -10,10 +10,14 @@ if git config --local transcrypt.version >/dev/null; then
 fi
 set +a
 
+echo debug-1
 source ${SUPPORT_FIRECLOUD_DIR}/repo/ci.sh/debug.inc.sh
 
+echo debug-2
 source ${SUPPORT_FIRECLOUD_DIR}/repo/ci.sh/before-install.pre.inc.sh
+echo debug-3
 source ${SUPPORT_FIRECLOUD_DIR}/repo/ci.sh/before-install.inc.sh
+echo debug-4
 source ${SUPPORT_FIRECLOUD_DIR}/repo/ci.sh/install.inc.sh
 # source ${SUPPORT_FIRECLOUD_DIR}/repo/ci.sh/before-script.inc.sh
 source ${SUPPORT_FIRECLOUD_DIR}/repo/ci.sh/script.inc.sh
