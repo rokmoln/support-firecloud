@@ -44,6 +44,7 @@ if which brew >/dev/null 2>&1; then
     unset HOMEBREW_PREFIX
 fi
 
+echo debug-exe-env-before-make
 function make() {
     local MAKE_COMMAND=$(which -a make | grep "^/" | head -1)
     [[ -x make.sh ]] || [[ -n "${SF_MAKE_SH_PASS:-}" ]] || {
@@ -54,3 +55,4 @@ function make() {
     export SF_MAKE_SH_PASS=1
     ./make.sh $@
 }
+echo debug-exe-env-after-make
