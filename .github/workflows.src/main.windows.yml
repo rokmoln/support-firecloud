@@ -1,4 +1,4 @@
-name: CI
+name: CI Windows
 on:
   push:
     branches:
@@ -29,7 +29,7 @@ aliases:
       SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
       SLACK_CHANNEL: cloud-ci
       CI_STATUS: ${{ job.status }}
-    run: ./.ci.sh notifications || true
+    run: wsl --user github bash -c "./.ci.sh notifications || true"
     if: always()
 
 jobs:
@@ -38,10 +38,7 @@ jobs:
       fail-fast: false
       matrix:
         os:
-          - ubuntu-16.04
-          - ubuntu-18.04
-          - ubuntu-20.04
-          - macos-latest
+          - windows-latest
         sf_ci_brew_install:
           - minimal
           - dev
@@ -53,20 +50,31 @@ jobs:
       - *checkout
       - *checkout-submodules
       - shell: bash
-        run: ./.ci.sh before_install
+        run: |-
+          choco install wsl-ubuntu-1804
+          # - wsl --setdefault Ubuntu-18.04
+          wsl bash -c "sudo addgroup --gid 2000 github"
+          wsl bash -c "sudo adduser --uid 2000 --ingroup github --home /home/github --shell /bin/bash --disabled-password --gecos \"\" github"
+          wsl bash -c "sudo adduser github sudo"
+          wsl bash -c "sudo echo \"github ALL=(ALL) NOPASSWD:ALL\" >> /etc/sudoers"
+          # Use wsl.conf to fix error: chmod on .git/config.lock failed: Operation not permitted
+          # See https://gist.github.com/shakahl/8b6c969768b3a54506c0fc4905d729a0
+          wsl bash -c "sudo cp priv/wsl.conf /etc/wsl.conf && sudo chmod 0644 /etc/wsl.conf"
       - shell: bash
-        run: ./.ci.sh install
+        run: wsl --user github bash -c "./.ci.sh before_install"
       - shell: bash
-        run: ./.ci.sh before_script
+        run: wsl --user github bash -c "./.ci.sh install"
       - shell: bash
-        run: ./.ci.sh script
+        run: wsl --user github bash -c "./.ci.sh before_script"
       - shell: bash
-        run: ./.ci.sh after_failure || true
+        run: wsl --user github bash -c "./.ci.sh script"
+      - shell: bash
+        run: wsl --user github bash -c "./.ci.sh after_failure || true"
         if: failure()
       - shell: bash
-        run: ./.ci.sh after_success || true
+        run: wsl --user github bash -c "./.ci.sh after_success || true"
       - shell: bash
-        run: ./.ci.sh after_script || true
+        run: wsl --user github bash -c "./.ci.sh after_script || true"
         if: always()
       - *notify-slack
 
