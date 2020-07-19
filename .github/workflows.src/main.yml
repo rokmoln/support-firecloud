@@ -25,7 +25,7 @@ aliases:
       submodule update --init --force --recursive --depth=1
   notify-slack: &notify-slack
     env:
-      SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHHOK }}
+      SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
       SLACK_CHANNEL: cloud-ci
       CI_STATUS: ${{ job.status }}
     run: ./.ci.sh notifications || true
