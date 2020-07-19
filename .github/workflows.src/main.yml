@@ -24,6 +24,7 @@ aliases:
       git -c "http.extraheader=$auth_header" -c protocol.version=2 \
       submodule update --init --force --recursive --depth=1
   notify-slack: &notify-slack
+    shell: bash
     env:
       SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
       SLACK_CHANNEL: cloud-ci
@@ -41,6 +42,7 @@ jobs:
           - ubuntu-18.04
           - ubuntu-20.04
           - macos-latest
+          - windows-latest
         sf_ci_brew_install:
           - minimal
           - dev
@@ -51,14 +53,21 @@ jobs:
     steps:
       - *checkout
       - *checkout-submodules
-      - run: ./.ci.sh before_install
-      - run: ./.ci.sh install
-      - run: ./.ci.sh before_script
-      - run: ./.ci.sh script
-      - run: ./.ci.sh after_failure || true
+      - shell: bash
+        run: ./.ci.sh before_install
+      - shell: bash
+        run: ./.ci.sh install
+      - shell: bash
+        run: ./.ci.sh before_script
+      - shell: bash
+        run: ./.ci.sh script
+      - shell: bash
+        run: ./.ci.sh after_failure || true
         if: failure()
-      - run: ./.ci.sh after_success || true
-      - run: ./.ci.sh after_script || true
+      - shell: bash
+        run: ./.ci.sh after_success || true
+      - shell: bash
+        run: ./.ci.sh after_script || true
         if: always()
       - *notify-slack
 
