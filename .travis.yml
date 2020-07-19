@@ -119,13 +119,13 @@ jobs:
       before_install:
         - choco install wsl-ubuntu-1804
         # - wsl --setdefault Ubuntu-18.04
-        - wsl bash -c 'sudo addgroup --gid 2000 travis'
-        - wsl bash -c 'sudo adduser --uid 2000 --ingroup travis --home /home/travis --shell /bin/bash --disabled-password --gecos "" travis'
-        - wsl bash -c 'sudo adduser travis sudo'
-        - wsl bash -c 'sudo echo "travis ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers'
+        - wsl bash -c "sudo addgroup --gid 2000 travis'
+        - wsl bash -c "sudo adduser --uid 2000 --ingroup travis --home /home/travis --shell /bin/bash --disabled-password --gecos \"\" travis"
+        - wsl bash -c "sudo adduser travis sudo"
+        - wsl bash -c "sudo echo \"travis ALL=(ALL) NOPASSWD:ALL\" >> /etc/sudoers"
         # Use wsl.conf to fix error: chmod on .git/config.lock failed: Operation not permitted
         # See https://gist.github.com/shakahl/8b6c969768b3a54506c0fc4905d729a0
-        - wsl bash -c 'sudo cp priv/wsl.conf /etc/wsl.conf && sudo chmod 0644 /etc/wsl.conf'
+        - wsl bash -c "sudo cp priv/wsl.conf /etc/wsl.conf && sudo chmod 0644 /etc/wsl.conf"
         # NOTE TRAVIS_BUILD_DIR will be pointing to the wrong folder under WSL
         - WSLENV=${WSLENV}:$(bin/travis-get-env-vars --wslenv) wsl --user travis ./.ci.sh before_install
       install: WSLENV=${WSLENV}:$(bin/travis-get-env-vars --wslenv) wsl --user travis ./.ci.sh install
