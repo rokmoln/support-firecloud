@@ -57,7 +57,7 @@ after_deploy: ./.ci.sh after_deploy
 stages:
   - test
   - name: publish
-    if: type IN (push) AND tag IS present
+    if: type IN (push) AND branch IN (stages) # tag IS present
 
 jobs:
   include:
