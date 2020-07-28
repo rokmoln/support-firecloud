@@ -3,8 +3,11 @@ set -euo pipefail
 
 echo_do "brew: Installing dev packages..."
 source ${SUPPORT_FIRECLOUD_DIR}/ci/brew-install-common.inc.sh
+exe make .github/workflows/main.yml
 source ${SUPPORT_FIRECLOUD_DIR}/ci/brew-install-aws.inc.sh
+exe make .github/workflows/main.yml
 source ${SUPPORT_FIRECLOUD_DIR}/ci/brew-install-py.inc.sh
+exe make .github/workflows/main.yml
 
 BREW_FORMULAE="$(cat <<-EOF
 jid
@@ -20,3 +23,4 @@ done
 unset BREW_FORMULAE
 
 echo_done
+exe make .github/workflows/main.yml
