@@ -30,6 +30,7 @@ else
                     echo_done
                 fi
             fi
+            unset HAS_DOCKER
             ;;
         Linux)
             (
@@ -44,6 +45,7 @@ else
                         for PKG in docker docker-engine docker.io containerd runc; do
                             ${SUDO} apt-get remove ${PKG} || true;
                         done
+                        unset PKG
 
                         apt_install apt-transport-https
                         apt_install ca-certificates
@@ -67,6 +69,7 @@ else
                         ${SUDO} curl -L -o /usr/local/bin/docker-compose \
                             "${DOCKER_COMPOSE_LATEST_URL}/docker-compose-$(uname -s)-$(uname -m)"
                         ${SUDO} chmod +x /usr/local/bin/docker-compose
+                        unset DOCKER_COMPOSE_LATEST_URL
                         # END https://docs.docker.com/compose/install/
                         ;;
                     *)
@@ -74,10 +77,13 @@ else
                         brew_install docker-compose
                         ;;
                 esac
+                unset RELEASE_ID
+                unset RELEASE_VERSION_ID
+                unset RELEASE_VERSION_CODENAME
             )
             ;;
         *)
-            echo_err "${OS} is an unsupported OS for installing Docker."
+            echo_err "$(uname -s) is an unsupported OS for installing Docker."
             return 1
             ;;
     esac

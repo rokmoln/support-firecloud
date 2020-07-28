@@ -25,5 +25,6 @@ PIPENV_TAG=2549656dc09e132d8ba2fa6327c939f5f9a951b7
 echo_do "brew: Installing pipenv@${PIPENV_TAG} via pip3..."
 brew uninstall --force pipenv
 pip3 install https://github.com/pypa/pipenv/archive/${PIPENV_TAG}.zip
+unset PIPENV_TAG
 exe_and_grep_q "pipenv --version | head -1" "^pipenv, version 2018.11.27.dev0"
 echo_done

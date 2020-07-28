@@ -58,6 +58,8 @@ case $(uname -s) in
         return 1
         ;;
 esac
+unset HAS_BREW_2
+unset RAW_GUC_URL
 
 source ${SUPPORT_FIRECLOUD_DIR}/sh/exe-env.inc.sh
 
@@ -79,8 +81,10 @@ CI_CACHE_HOMEBREW_PREFIX_FULL=$(cd ${CI_CACHE_HOMEBREW_PREFIX} 2>/dev/null && pw
     fi
     echo_done
 }
-unset HOMEBREW_PREFIX
 unset CI_CACHE_HOMEBREW_PREFIX
+unset CI_CACHE_HOMEBREW_PREFIX_FULL
+unset HOMEBREW_PREFIX
+unset HOMEBREW_PREFIX_FULL
 
 [[ "${CI:-}" != "true" ]] || {
     source ${SUPPORT_FIRECLOUD_DIR}/ci/brew-util.inc.sh
