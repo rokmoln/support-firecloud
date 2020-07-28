@@ -68,10 +68,18 @@ GITHUB_GLOBAL_GITIGNORES := $(patsubst %,generic/github-global-gitignore/%.gitig
 # ------------------------------------------------------------------------------
 
 .github/workflows/main.yml: .github/workflows/main.yml.tpl .github/workflows.src/main.yml
+	set -x && \
+		echo $(shell $(REALPATH) $<) $@ || true; \
+		ls -la $(shell $(REALPATH) $<) $@ || true; \
+		touch .github/workflows/main.yml || true
 	$(call sf-generate-from-template)
 
 
 .github/workflows/main.windows.yml: .github/workflows/main.windows.yml.tpl .github/workflows.src/main.windows.yml
+	set -x && \
+		echo $(shell $(REALPATH) $<) $@ || true; \
+		ls -la $(shell $(REALPATH) $<) $@ || true; \
+		touch .github/workflows/main.yml || true
 	$(call sf-generate-from-template)
 
 
