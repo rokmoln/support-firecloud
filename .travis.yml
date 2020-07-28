@@ -55,9 +55,14 @@ deploy:
 after_deploy: ./.ci.sh after_deploy
 
 stages:
-  - test
+  - name: test
+    if: type IN (push, cron) AND NOT branch IN (wsl)
   - name: publish
     if: type IN (push) AND branch IN (stages) # tag IS present
+  - name: test-extra
+    if: type IN (push, cron) AND tag IS blank
+  - name: test-pr
+    if: type IN (pull_request)
 
 jobs:
   include:
@@ -67,10 +72,12 @@ jobs:
       os: linux
       dist: xenial
       env: CACHE_NAME=linux-xenial-minimal SF_CI_BREW_INSTALL=minimal
-      if: type IN (push, cron, pull_request) AND NOT branch IN (wsl)
 
     - <<: *stage-linux-xenial-minimal
       stage: publish
+
+    - <<: *stage-linux-xenial-minimal
+      stage: test-pr
 
     - &stage-linux-xenial-dev
       stage: test
@@ -78,7 +85,6 @@ jobs:
       os: linux
       dist: xenial
       env: CACHE_NAME=linux-xenial-dev SF_CI_BREW_INSTALL=dev
-      if: type IN (push, cron) AND NOT branch IN (wsl)
 
     - <<: *stage-linux-xenial-dev
       stage: publish
@@ -89,7 +95,6 @@ jobs:
       os: linux
       dist: bionic
       env: CACHE_NAME=linux-bionic-minimal SF_CI_BREW_INSTALL=minimal
-      if: type IN (push, cron) AND NOT branch IN (wsl)
 
     - <<: *stage-linux-bionic-minimal
       stage: publish
@@ -100,7 +105,6 @@ jobs:
       os: linux
       dist: bionic
       env: CACHE_NAME=linux-bionic-dev SF_CI_BREW_INSTALL=dev
-      if: type IN (push, cron) AND NOT branch IN (wsl)
 
     - <<: *stage-linux-bionic-dev
       stage: publish
@@ -111,25 +115,23 @@ jobs:
       os: linux
       dist: focal
       env: CACHE_NAME=linux-focal-minimal SF_CI_BREW_INSTALL=minimal
-      if: type IN (push, cron) AND NOT branch IN (wsl)
 
     - <<: *stage-linux-focal-minimal
       stage: publish
 
     - &stage-osx-xcode11-3-dev
-      stage: test
+      stage: test-extra
       name: "OSX High Sierra 10.14 (Xcode 11.3) with dev (common+) brew"
       os: osx
       osx_image: xcode11.3
       env: CACHE_NAME=osx-xcode11-3-dev SF_CI_BREW_INSTALL=dev
-      if: type IN (push, cron) AND tag IS blank AND NOT branch IN (wsl)
+      if: NOT branch IN (wsl)
 
     - &stage-wsl-linux-bionic-minimal
-      stage: test
+      stage: test-extra
       name: "Windows Server 1809 (WSL) with Linux Bionic 18.04 with minimal brew"
       os: windows
       env: CACHE_NAME=wsl-linux-bionic-minimal SF_CI_BREW_INSTALL=minimal WSLENV=CI:SF_CI_BREW_INSTALL:SF_LOG_BOOTSTRAP
-      if: type IN (push, cron) AND tag IS blank
       language: shell # leaving it to "generic" would cause the machine not to boot
       git:
         autocrlf: false
