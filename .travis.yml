@@ -58,16 +58,16 @@ after_deploy: ./.ci.sh after_deploy
 
 jobs:
   include:
-    # - stage: test
-    #   name: "OSX High Sierra 10.14 (Xcode 11.3) with dev (common+) brew"
-    #   os: osx
-    #   osx_image: xcode11.3
-    #   env: CACHE_NAME=osx-xcode11.3-dev SF_CI_BREW_INSTALL=dev
-    #   if: type IN (push, cron) AND tag IS blank AND NOT branch IN (wsl)
-
     - stage: test
-      name: "Linux Bionic 18.04 with dev (common+) brew"
-      os: linux
-      dist: bionic
-      env: CACHE_NAME=linux-bionic-dev SF_CI_BREW_INSTALL=dev
-      if: type IN (push, cron) AND NOT branch IN (wsl)
+      name: "OSX High Sierra 10.14 (Xcode 11.3) with dev (common+) brew"
+      os: osx
+      osx_image: xcode11.3
+      env: CACHE_NAME=osx-xcode11.3-dev SF_CI_BREW_INSTALL=dev
+      if: type IN (push, cron) AND tag IS blank AND NOT branch IN (wsl)
+
+    # - stage: test
+    #   name: "Linux Bionic 18.04 with dev (common+) brew"
+    #   os: linux
+    #   dist: bionic
+    #   env: CACHE_NAME=linux-bionic-dev SF_CI_BREW_INSTALL=dev
+    #   if: type IN (push, cron) AND NOT branch IN (wsl)

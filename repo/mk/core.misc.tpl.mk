@@ -22,8 +22,9 @@
 SF_CHECK_TPL_FILES += \
 
 define sf-generate-from-template
+	$(info $@ $< $(REALPATH))
 	$(shell $(ECHO_DO) "Generating $@ from template $<...")
-#	$(shell $(shell $(REALPATH) $<) > $@)
+	$(shell $(shell $(REALPATH) $<) > $@)
 	$(shell $(ECHO_DONE))
 endef
 
