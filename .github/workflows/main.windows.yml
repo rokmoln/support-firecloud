@@ -48,13 +48,9 @@ jobs:
 
           set -x
 
-          wslconfig --list || true
+          wsl.exe --list --verbose --all || true
 
-          wslconfig --setdefault Ubuntu-18.04 || true
-
-          wslconfig /list || true
-
-          wslconfig /setdefault Ubuntu-18.04 || true
+          wsl.exe --set-default Ubuntu-18.04 || true
 
           exit 1
 
