@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - github* # github branches
+      - github/** # github branches
       - master
     tags:
       - v*.*.* # version tags

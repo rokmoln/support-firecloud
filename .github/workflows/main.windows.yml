@@ -4,6 +4,7 @@ name: CI Windows
   push:
     branches:
       - github*
+      - github/**
       - master
     tags:
       - v*.*.*
