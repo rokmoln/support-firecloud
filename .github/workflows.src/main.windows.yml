@@ -60,8 +60,12 @@ jobs:
         run: |-
           # why --ignore-checksum? see https://chocolatey.org/packages/wsl-ubuntu-1804#comment-5026624059
           choco install wsl-ubuntu-1804 --no-progress --ignore-checksum
-          wslconfig /list
-          wslconfig /setdefault Ubuntu-18.04
+          set -x
+          wslconfig --list || true
+          wslconfig --setdefault Ubuntu-18.04 || true
+          wslconfig /list || true
+          wslconfig /setdefault Ubuntu-18.04 || true
+          exit 1
           wsl bash -c "cat /etc/os-release"
           wsl bash -c "sudo addgroup --gid 2000 github"
           wsl bash -c "sudo adduser --uid 2000 --ingroup github --home /home/github --shell /bin/bash --disabled-password --gecos \"\" github"

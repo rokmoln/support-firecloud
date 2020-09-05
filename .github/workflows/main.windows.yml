@@ -45,9 +45,17 @@ jobs:
 
           choco install wsl-ubuntu-1804 --no-progress --ignore-checksum
 
-          wslconfig /list
+          set -x
 
-          wslconfig /setdefault Ubuntu-18.04
+          wslconfig --list || true
+
+          wslconfig --setdefault Ubuntu-18.04 || true
+
+          wslconfig /list || true
+
+          wslconfig /setdefault Ubuntu-18.04 || true
+
+          exit 1
 
           wsl bash -c "cat /etc/os-release"
 
