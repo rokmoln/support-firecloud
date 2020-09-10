@@ -37,7 +37,9 @@ jobs:
           ls -la /home/linuxbrew/.linuxbrew/Homebrew
           which brew
           brew config
-          brew doctor
+          brew doctor || true
+          cd /home/linuxbrew/.linuxbrew/Homebrew && git diff && cd -
+          cd /home/linuxbrew/.linuxbrew/Homebrew/Library/Taps/homebrew/homebrew-core && git diff && cd -
           brew install exiftool
           ls -la $(brew --prefix)/Homebrew
           ls -la /home/linuxbrew/.linuxbrew/Homebrew
@@ -50,6 +52,9 @@ jobs:
           git submodule sync --recursive
           git -c "http.extraheader=$auth_header" -c protocol.version=2 \
           submodule update --init --force --recursive --depth=1
+      - name: Fix brew permissions
+        shell: bash
+        run: |
       - shell: bash
         run: |
           ./.ci.sh before_install
