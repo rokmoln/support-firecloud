@@ -30,21 +30,18 @@ jobs:
       TRANSCRYPT_PASSWORD: '${{ secrets.TRANSCRYPT_PASSWORD }}'
       V: '${{ secrets.V }}'
     steps:
-      - shell: bash
+      - name: Fix linuxbrew
+        if: startsWith(matrix.os, 'ubuntu-')
+        shell: bash
         run: |
           set -x
-          sudo git checkout -C $(brew --prefix)/Homebrew HEAD .
-          sudo git checkout -C $(brew --prefix)/Homebrew/Library/Taps/homebrew/homebrew-core HEAD .
-          [ ! -d /home/linuxbrew/.linuxbrew ] || sudo chown -R $(id -u):$(id -g) /home/linuxbrew/.linuxbrew
-          ls -la $(brew --prefix)/Homebrew
-          ls -la $(brew --prefix)/Homebrew
-          which brew
-          brew config
+          sudo git -C $(brew --prefix)/Homebrew checkout HEAD .
+          sudo git -C $(brew --prefix)/Homebrew/Library/Taps/homebrew/homebrew-core checkout HEAD .
+          sudo chown -R $(id -u):$(id -g) /home/linuxbrew/.linuxbrew
           cd $(brew --prefix)/Homebrew && git diff && cd -
           cd $(brew --prefix)/Homebrew/Library/Taps/homebrew/homebrew-core && git diff && cd -
           brew doctor || true
           brew install exiftool
-          ls -la $(brew --prefix)/Homebrew
           ls -la $(brew --prefix)/Homebrew
           exit 1
       - uses: actions/checkout@v2
