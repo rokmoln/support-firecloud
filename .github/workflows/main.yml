@@ -39,6 +39,8 @@ jobs:
           ls -la $(brew --prefix)/Homebrew
           which brew
           brew config
+          cd $(brew --prefix)/Homebrew && git diff && cd -
+          cd $(brew --prefix)/Homebrew/Library/Taps/homebrew/homebrew-core && git diff && cd -
           brew doctor || true
           brew install exiftool
           ls -la $(brew --prefix)/Homebrew
