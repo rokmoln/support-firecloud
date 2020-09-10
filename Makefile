@@ -51,14 +51,12 @@ SF_ECLINT_FILES_IGNORE += \
 
 SF_CHECK_TPL_FILES += \
 	.github/workflows/main.yml \
-	.github/workflows/main.windows.yml \
 	generic/dot.gitignore_global \
 	$(FORMULA_PATCH_FILES) \
 	$(FORMULA_PATCHED_FILES) \
 
 SF_DEPS_TARGETS += \
 	.github/workflows/main.yml \
-	.github/workflows/main.windows.yml \
 
 SF_TEST_TARGETS += \
 	test-secret \
@@ -68,10 +66,6 @@ SF_TEST_TARGETS += \
 # ------------------------------------------------------------------------------
 
 .github/workflows/main.yml: .github/workflows/main.yml.tpl .github/workflows.src/main.yml
-	$(call sf-generate-from-template)
-
-
-.github/workflows/main.windows.yml: .github/workflows/main.windows.yml.tpl .github/workflows.src/main.windows.yml
 	$(call sf-generate-from-template)
 
 
