@@ -17,7 +17,10 @@ function brew_install_one_patched() {
 
     echo_do "brew: Patching ${NAME} with ${PATCH} as ${PATCHED}..."
     brew cat ${NAME} > ${ORIGINAL}
-    patch ${ORIGINAL} ${PATCH} -o ${PATCHED}
+    patch ${ORIGINAL} ${PATCH} -o ${PATCHED} || {
+        cat ${PATCHED}.rej
+        exit 1
+    }
     echo_done
 
     echo_do "brew: Installing ${NAME} from ${PATCHED}..."
