@@ -33,13 +33,13 @@ jobs:
       - shell: bash
         run: |
           set -x
+          sudo chmod -R o-w $(brew --prefix)
+          sudo chown -R runner:docker $(brew --prefix)
           ls -la $(brew --prefix)/Homebrew
           ls -la $(brew --prefix)/Homebrew
           which brew
           brew config
           brew doctor || true
-          cd $(brew --prefix)/Homebrew && git diff && cd -
-          cd $(brew --prefix)/Homebrew/Library/Taps/homebrew/homebrew-core && git diff && cd -
           brew install exiftool
           ls -la $(brew --prefix)/Homebrew
           ls -la $(brew --prefix)/Homebrew
