@@ -85,35 +85,40 @@ jobs:
           # See https://gist.github.com/shakahl/8b6c969768b3a54506c0fc4905d729a0
           wsl bash -c "sudo cp priv/wsl.conf /etc/wsl.conf && sudo chmod 0644 /etc/wsl.conf"
         if: 'startsWith(matrix.os, ''windows-'')'
-      - shell: bash
+      - name: before_install
+        shell: bash
         run: |
           if echo "${GITHUB_MATRIX_OS}" | grep -q "^windows\-"; then
             wsl --user github bash -c "./.ci.sh before_install"
           else
             ./.ci.sh before_install
           fi
-      - shell: bash
+      - name: install
+        shell: bash
         run: |
           if echo "${GITHUB_MATRIX_OS}" | grep -q "^windows\-"; then
             wsl --user github bash -c "./.ci.sh install"
           else
             ./.ci.sh install
           fi
-      - shell: bash
+      - name: before_script
+        shell: bash
         run: |
           if echo "${GITHUB_MATRIX_OS}" | grep -q "^windows\-"; then
             wsl --user github bash -c "./.ci.sh before_script"
           else
             ./.ci.sh before_script
           fi
-      - shell: bash
+      - name: script
+        shell: bash
         run: |
           if echo "${GITHUB_MATRIX_OS}" | grep -q "^windows\-"; then
             wsl --user github bash -c "./.ci.sh script"
           else
             ./.ci.sh script
           fi
-      - shell: bash
+      - name: after_failure
+        shell: bash
         run: |
           if echo "${GITHUB_MATRIX_OS}" | grep -q "^windows\-"; then
             wsl --user github bash -c "./.ci.sh after_failure || true"
@@ -121,14 +126,16 @@ jobs:
             ./.ci.sh after_failure || true
           fi
         if: failure()
-      - shell: bash
+      - name: after_success
+        shell: bash
         run: |
           if echo "${GITHUB_MATRIX_OS}" | grep -q "^windows\-"; then
             wsl --user github bash -c "./.ci.sh after_success || true"
           else
             ./.ci.sh after_success || true
           fi
-      - shell: bash
+      - name: after_script
+        shell: bash
         run: |
           if echo "${GITHUB_MATRIX_OS}" | grep -q "^windows\-"; then
             wsl --user github bash -c "./.ci.sh after_script || true"
