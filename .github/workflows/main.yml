@@ -34,15 +34,15 @@ jobs:
         run: |
           set -x
           ls -la $(brew --prefix)/Homebrew
-          ls -la /home/linuxbrew/.linuxbrew/Homebrew
+          ls -la $(brew --prefix)/Homebrew
           which brew
           brew config
           brew doctor || true
-          cd /home/linuxbrew/.linuxbrew/Homebrew && git diff && cd -
-          cd /home/linuxbrew/.linuxbrew/Homebrew/Library/Taps/homebrew/homebrew-core && git diff && cd -
+          cd $(brew --prefix)/Homebrew && git diff && cd -
+          cd $(brew --prefix)/Homebrew/Library/Taps/homebrew/homebrew-core && git diff && cd -
           brew install exiftool
           ls -la $(brew --prefix)/Homebrew
-          ls -la /home/linuxbrew/.linuxbrew/Homebrew
+          ls -la $(brew --prefix)/Homebrew
           exit 1
       - uses: actions/checkout@v2
       - name: Run actions/checkout@v2 submodules
