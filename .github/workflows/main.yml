@@ -34,7 +34,7 @@ jobs:
         run: |
           set -x
           which brew
-          brew install exitftool
+          brew install exiftool
           ls -la $(brew --prefix)/Homebrew
           ls -la /home/linuxbrew/.linuxbrew/Homebrew
           exit 1
