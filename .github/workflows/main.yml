@@ -27,17 +27,18 @@ jobs:
     name: 'main-${{ matrix.os }}-${{ matrix.sf_ci_brew_install }}'
     runs-on: '${{ matrix.os }}'
     env:
+      GITHUB_MATRIX_OS: '${{ matrix.os }}'
       GH_TOKEN: '${{ secrets.GH_TOKEN }}'
       SF_CI_BREW_INSTALL: '${{ matrix.sf_ci_brew_install }}'
       SF_LOG_BOOTSTRAP: true
       SF_PRINTENV_BOOTSTRAP: '${{ secrets.SF_PRINTENV_BOOTSTRAP }}'
       TRANSCRYPT_PASSWORD: '${{ secrets.TRANSCRYPT_PASSWORD }}'
       V: '${{ secrets.V }}'
+      WSLENV: 'CI:SF_CI_BREW_INSTALL:SF_LOG_BOOTSTRAP'
     steps:
       - name: Ubuntu
         shell: bash
         run: |
-          echo "::set-env name=GITHUB_MATRIX_OS::${{ matrix.os }}"
           # see https://github.com/actions/virtual-environments/issues/1568
           sudo git -C $(brew --prefix)/Homebrew checkout HEAD .
           sudo git -C $(brew --prefix)/Homebrew/Library/Taps/homebrew/homebrew-core checkout HEAD .
@@ -45,14 +46,11 @@ jobs:
         if: 'startsWith(matrix.os, ''ubuntu-'')'
       - name: MacOS
         shell: bash
-        run: |
-          echo "::set-env name=GITHUB_MATRIX_OS::${{ matrix.os }}"
+        run: ''
         if: 'startsWith(matrix.os, ''macos-'')'
       - name: Windows
         shell: bash
         run: >
-          echo "::set-env name=GITHUB_MATRIX_OS::${{ matrix.os }}"
-
           git config --global core.autocrlf false
 
           git config --global core.eol lf
