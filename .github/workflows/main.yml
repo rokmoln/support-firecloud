@@ -30,6 +30,14 @@ jobs:
       TRANSCRYPT_PASSWORD: '${{ secrets.TRANSCRYPT_PASSWORD }}'
       V: '${{ secrets.V }}'
     steps:
+      - shell: bash
+        run: |
+          set -x
+          which brew
+          brew install exitftool
+          ls -la $(brew --prefix)/Homebrew
+          ls -la /home/linuxbrew/.linuxbrew/Homebrew
+          exit 1
       - uses: actions/checkout@v2
       - name: Run actions/checkout@v2 submodules
         shell: bash
