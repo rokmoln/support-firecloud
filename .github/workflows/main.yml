@@ -36,6 +36,8 @@ jobs:
           ls -la $(brew --prefix)/Homebrew
           ls -la /home/linuxbrew/.linuxbrew/Homebrew
           which brew
+          brew config
+          brew doctor
           brew install exiftool
           ls -la $(brew --prefix)/Homebrew
           ls -la /home/linuxbrew/.linuxbrew/Homebrew
