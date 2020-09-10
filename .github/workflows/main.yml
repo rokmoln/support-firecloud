@@ -33,9 +33,9 @@ jobs:
       - shell: bash
         run: |
           set -x
-          [ ! -d /home/linuxbrew/.linuxbrew ] || sudo git checkout -C /home/linuxbrew/.linuxbrew/Homebrew HEAD .
-          [ ! -d /home/linuxbrew/.linuxbrew ] || sudo git checkout -C /home/linuxbrew/.linuxbrew/Homebrew/Library/Taps/homebrew/homebrew-core HEAD .
-          [ ! -d /home/linuxbrew/.linuxbrew ] || sudo chown -R $(id -u):$(id -g) $(brew --prefix)
+          sudo git checkout -C $(brew --prefix)/Homebrew HEAD .
+          sudo git checkout -C $(brew --prefix)/Homebrew/Library/Taps/homebrew/homebrew-core HEAD .
+          [ ! -d /home/linuxbrew/.linuxbrew ] || sudo chown -R $(id -u):$(id -g) /home/linuxbrew/.linuxbrew
           ls -la $(brew --prefix)/Homebrew
           ls -la $(brew --prefix)/Homebrew
           which brew
