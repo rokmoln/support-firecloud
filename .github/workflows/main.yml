@@ -34,7 +34,7 @@ jobs:
         run: |
           set -x
           sudo chmod -R o-w $(brew --prefix)
-          sudo chown -R runner:docker $(brew --prefix)
+          sudo chown -R $(id -u):$(id -g) $(brew --prefix)
           ls -la $(brew --prefix)/Homebrew
           ls -la $(brew --prefix)/Homebrew
           which brew
