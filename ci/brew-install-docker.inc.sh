@@ -55,9 +55,8 @@ else
 
                         curl -fsSL https://download.docker.com/linux/ubuntu/gpg | ${SUDO} apt-key add -
                         ${SUDO} apt-key fingerprint 0EBFCD88
-                        ${SUDO} add-apt-repository \
+                        ${SUDO} add-apt-repository -u \
                                 "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-                        apt_update
 
                         apt_install docker-ce
                         apt_install docker-ce-cli
