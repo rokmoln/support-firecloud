@@ -33,7 +33,8 @@ jobs:
       - shell: bash
         run: |
           set -x
-          [ ! -d /home/linuxbrew/.linuxbrew ] || sudo chmod -R go-w /home/linuxbrew/.linuxbrew
+          [ ! -d /home/linuxbrew/.linuxbrew ] || sudo git checkout -C /home/linuxbrew/.linuxbrew/Homebrew HEAD .
+          [ ! -d /home/linuxbrew/.linuxbrew ] || sudo git checkout -C /home/linuxbrew/.linuxbrew/Homebrew/Library/Taps/homebrew/homebrew-core HEAD .
           [ ! -d /home/linuxbrew/.linuxbrew ] || sudo chown -R $(id -u):$(id -g) $(brew --prefix)
           ls -la $(brew --prefix)/Homebrew
           ls -la $(brew --prefix)/Homebrew
