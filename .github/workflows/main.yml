@@ -33,8 +33,8 @@ jobs:
       - shell: bash
         run: |
           set -x
-          [ "$(uname -s)" != "Linux" ] || sudo chmod -R go-w $(brew --prefix)
-          [ "$(uname -s)" != "Linux" ] || sudo chown -R $(id -u):$(id -g) $(brew --prefix)
+          [ ! -d /home/linuxbrew/.linuxbrew ] || sudo chmod -R go-w /home/linuxbrew/.linuxbrew
+          [ ! -d /home/linuxbrew/.linuxbrew ] || sudo chown -R $(id -u):$(id -g) $(brew --prefix)
           ls -la $(brew --prefix)/Homebrew
           ls -la $(brew --prefix)/Homebrew
           which brew
