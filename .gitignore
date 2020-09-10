@@ -1,5 +1,5 @@
 /BUILD
-/Formula/patch-lib/*.rb
+/Formula/patch-lib/
 /VERSION
 /codeship.aes
 /generic/github-global-gitignore/
