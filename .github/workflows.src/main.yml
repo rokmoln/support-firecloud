@@ -49,6 +49,10 @@ jobs:
         sf_ci_brew_install:
           - minimal
           - dev
+        exclude:
+          # too time consuming
+          - os: windows-latest
+            sf_ci_brew_install: dev
     name: main-${{ matrix.os }}-${{ matrix.sf_ci_brew_install }}
     runs-on: ${{ matrix.os }}
     env:
