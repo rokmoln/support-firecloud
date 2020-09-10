@@ -8,8 +8,7 @@ function brew_install_one_patched() {
     local NAME=$(basename "${FULLNAME}" | sed "s/\.rb\$//")
     local OPTIONS=$(echo "${FORMULA} " | cut -d " " -f 2- | xargs -n 1 | sort -u)
 
-    local DIR=${GIT_ROOT}/Formula/patch-lib
-    mkdir -p ${DIR}
+    local DIR=$(mktemp -d)
 
     local PATCH=${GIT_ROOT}/Formula/${NAME}.patch
     local ORIGINAL=${DIR}/${NAME}.original.rb
