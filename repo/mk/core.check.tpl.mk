@@ -37,7 +37,7 @@ endef
 define sf-generate-from-template-patched # patched: original patch
 	$(ECHO_DO) "Generating $@ from original $< and patch $1..."
 	# $(CAT) patch | $(PATCH_STDOUT) original > patched
-	$(CAT) $1 | $(PATCH_STDOUT) $< > $@
+	$(CAT) $1 | $(PATCH) $< -o $@
 	$(ECHO_DONE)
 endef
 
