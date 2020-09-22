@@ -16,6 +16,8 @@ BREW = $(call which,BREW,brew)
 $(foreach VAR,BREW,$(call make-lazy,$(VAR)))
 
 COMMON_MKS := $(wildcard repo/mk/*.common.mk)
+# FIXME channels.common.mk isn't an "entrypoint" makefile, like the rest
+COMMON_MKS := $(filter-out repo/mk/channels.common.mk,$(COMMON_MKS))
 
 FORMULA_PATCH_FILES := $(shell $(GIT_LS) "Formula/*.patch")
 FORMULA_PATCHED_FILES := $(patsubst %.original.rb,%.rb,$(shell $(GIT_LS) "Formula/patch-src/*.original.rb"))
