@@ -27,7 +27,11 @@
 #
 # ------------------------------------------------------------------------------
 
-SUPPORT_FIRECLOUD_DIR := $(shell dirname $(abspath $(lastword $(MAKEFILE_LIST))/../..))
+# NOTE might be enough with core.common.mk
+ifndef SF_GENERIC_COMMON_INCLUDES_DEFAULT
+$(error Please include generic.common.mk, before including py.common.mk .)
+endif
+
 include $(SUPPORT_FIRECLOUD_DIR)/repo/mk/channels.deps.mk
 include $(SUPPORT_FIRECLOUD_DIR)/repo/mk/channels.promote.mk
 
