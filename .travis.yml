@@ -56,9 +56,9 @@ after_deploy: ./.ci.sh after_deploy
 
 stages:
   - name: test
-    if: type IN (push, cron)
-  - name: test-cron
     if: type IN (cron)
+  - name: test-cron
+    if: type IN (push, cron)
   - name: test-pr
     if: type IN (pull_request)
   - name: publish
@@ -97,13 +97,6 @@ jobs:
       env: CACHE_NAME=linux-bionic-dev SF_CI_BREW_INSTALL=dev
 
 # test-cron --------------------------------------------------------------------
-
-    - &stage-osx-xcode11-3-dev
-      stage: test-cron
-      name: "OSX High Sierra 10.14 (Xcode 11.3) with dev (common+) brew"
-      os: osx
-      osx_image: xcode11.3
-      env: CACHE_NAME=osx-xcode11-3-dev SF_CI_BREW_INSTALL=dev
 
     - &stage-wsl-linux-bionic-minimal
       stage: test-cron
