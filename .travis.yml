@@ -110,9 +110,6 @@ jobs:
       before_install:
         # why --ignore-checksum? see https://chocolatey.org/packages/wsl-ubuntu-1804#comment-5026624059
         - choco install wsl-ubuntu-1804 --no-progress --ignore-checksum
-        - wsl --user travis "pwd"
-        - wsl --user travis "git status"
-        - wsl --user travis "cat .ci.sh"
         - wsl bash -c "cat /etc/os-release"
         - wsl bash -c "sudo addgroup --gid 2000 travis"
         - wsl bash -c "sudo adduser --uid 2000 --ingroup travis --home /home/travis --shell /bin/bash --disabled-password --gecos \"\" travis"
@@ -124,6 +121,9 @@ jobs:
         # See https://gist.github.com/shakahl/8b6c969768b3a54506c0fc4905d729a0
         - wsl bash -c "sudo cp priv/wsl.conf /etc/wsl.conf && sudo chmod 0644 /etc/wsl.conf"
         # NOTE TRAVIS_BUILD_DIR will be pointing to the wrong folder under WSL
+        - wsl --user travis "pwd"
+        - wsl --user travis "git status"
+        - wsl --user travis "cat .ci.sh"
         - WSLENV=${WSLENV}:$(bin/travis-get-env-vars --wslenv) wsl --user travis ./.ci.sh before_install
       install: WSLENV=${WSLENV}:$(bin/travis-get-env-vars --wslenv) wsl --user travis ./.ci.sh install
       before_script: WSLENV=${WSLENV}:$(bin/travis-get-env-vars --wslenv) wsl --user travis ./.ci.sh before_script
