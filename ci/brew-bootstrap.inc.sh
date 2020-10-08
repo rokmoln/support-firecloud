@@ -72,39 +72,54 @@ function bootstrap_brew() {
 }
 
 function bootstrap_brew_lock() {
+    local SF_BOOTSTRAP_VERSION_HOMEBREW=$(
+        source ${SUPPORT_FIRECLOUD_DIR}/CONST.inc && echo ${SF_BOOTSTRAP_VERSION_HOMEBREW})
+    local SF_BOOTSTRAP_VERSION_HOMEBREW_CORE=$(
+        source ${SUPPORT_FIRECLOUD_DIR}/CONST.inc && echo ${SF_BOOTSTRAP_VERSION_HOMEBREW_CORE})
+    local SF_BOOTSTRAP_VERSION_HOMEBREW_CASK=$(
+        source ${SUPPORT_FIRECLOUD_DIR}/CONST.inc && echo ${SF_BOOTSTRAP_VERSION_HOMEBREW_CASK})
+    local SF_BOOTSTRAP_VERSION_LINUXBREW_CORE=$(
+        source ${SUPPORT_FIRECLOUD_DIR}/CONST.inc && echo ${SF_BOOTSTRAP_VERSION_LINUXBREW_CORE})
+
+    # NOTE requires git 2.5.0
     case $(uname -s) in
         Darwin)
-            [[ -z "${SF_BOOTSTRAP_VERSION_HOMEBREW:-}" ]] || {
-                echo_do "brew: Resetting $(brew --repo) to SF_BOOTSTRAP_VERSION_HOMEBREW=${SF_BOOTSTRAP_VERSION_HOMEBREW}..."
-                git -C $(brew --repo) fetch --depth 5000 # around 5000 commits from 2.0.0 to 2.5.0
-                git -C $(brew --repo) fetch --tags
+            [[ -z "${SF_BOOTSTRAP_VERSION_HOMEBREW}" ]] || {
+                echo_do "brew: Resetting $(brew --repo) to \
+                    SF_BOOTSTRAP_VERSION_HOMEBREW=${SF_BOOTSTRAP_VERSION_HOMEBREW}..."
+                git -C $(brew --repo) fetch --depth 1 origin ${SF_BOOTSTRAP_VERSION_HOMEBREW}
+                # git -C $(brew --repo) fetch --tags
                 git -C $(brew --repo) checkout ${SF_BOOTSTRAP_VERSION_HOMEBREW}
                 echo_done
             }
-            [[ -z "${SF_BOOTSTRAP_VERSION_HOMEBREW_CORE:-}" ]] || {
-                echo_do "brew: Resetting $(brew --repo homebrew/core) to SF_BOOTSTRAP_VERSION_HOMEBREW_CORE=${SF_BOOTSTRAP_VERSION_HOMEBREW_CORE}..."
-                git -C $(brew --repo homebrew/core) fetch --depth 50000 # around 50000 commits in 1 year
+            [[ -z "${SF_BOOTSTRAP_VERSION_HOMEBREW_CORE}" ]] || {
+                echo_do "brew: Resetting $(brew --repo homebrew/core) to \
+                    SF_BOOTSTRAP_VERSION_HOMEBREW_CORE=${SF_BOOTSTRAP_VERSION_HOMEBREW_CORE}..."
+                git -C $(brew --repo homebrew/core) fetch --depth 1 origin ${SF_BOOTSTRAP_VERSION_HOMEBREW_CORE}
                 git -C $(brew --repo homebrew/core) checkout ${SF_BOOTSTRAP_VERSION_HOMEBREW_CORE}
                 echo_done
             }
-            [[ -z "${SF_BOOTSTRAP_VERSION_HOMEBREW_CASK:-}" ]] || {
-                echo_do "brew: Resetting $(brew --repo homebrew/core) to SF_BOOTSTRAP_VERSION_HOMEBREW_CASK=${SF_BOOTSTRAP_VERSION_HOMEBREW_CASK}..."
-                git -C $(brew --repo homebrew/cask) fetch --depth 50000 # around 25000 commits in 1 year
+            [[ -z "${SF_BOOTSTRAP_VERSION_HOMEBREW_CASK}" ]] || {
+                echo_do "brew: Resetting $(brew --repo homebrew/core) to \
+                    SF_BOOTSTRAP_VERSION_HOMEBREW_CASK=${SF_BOOTSTRAP_VERSION_HOMEBREW_CASK}..."
+                git -C $(brew --repo homebrew/cask) fetch --depth 1 origin ${SF_BOOTSTRAP_VERSION_HOMEBREW_CASK}
                 git -C $(brew --repo homebrew/cask) checkout ${SF_BOOTSTRAP_VERSION_HOMEBREW_CASK}
                 echo_done
             }
             ;;
         Linux)
-            [[ -z "${SF_BOOTSTRAP_VERSION_HOMEBREW:-}" ]] || {
-                echo_do "brew: Resetting $(brew --repo) to SF_BOOTSTRAP_VERSION_HOMEBREW=${SF_BOOTSTRAP_VERSION_HOMEBREW}..."
-                git -C $(brew --repo) fetch --depth 5000 # around 5000 commits from 2.0.0 to 2.5.0
-                git -C $(brew --repo) fetch --tags
+            [[ -z "${SF_BOOTSTRAP_VERSION_HOMEBREW}" ]] || {
+                echo_do "brew: Resetting $(brew --repo) to \
+                    SF_BOOTSTRAP_VERSION_HOMEBREW=${SF_BOOTSTRAP_VERSION_HOMEBREW}..."
+                git -C $(brew --repo) fetch --depth 1 origin ${SF_BOOTSTRAP_VERSION_HOMEBREW}
+                # git -C $(brew --repo) fetch --tags
                 git -C $(brew --repo) checkout ${SF_BOOTSTRAP_VERSION_HOMEBREW}
                 echo_done
             }
-            [[ -z "${SF_BOOTSTRAP_VERSION_LINUXBREW_CORE:-}" ]] || {
-                echo_do "brew: Resetting $(brew --repo homebrew/core) to SF_BOOTSTRAP_VERSION_LINUXBREW_CORE=${SF_BOOTSTRAP_VERSION_LINUXBREW_CORE}..."
-                git -C $(brew --repo homebrew/core) fetch --depth 50000 # around 50000 commits in 1 year
+            [[ -z "${SF_BOOTSTRAP_VERSION_LINUXBREW_CORE}" ]] || {
+                echo_do "brew: Resetting $(brew --repo homebrew/core) to \
+                    SF_BOOTSTRAP_VERSION_LINUXBREW_CORE=${SF_BOOTSTRAP_VERSION_LINUXBREW_CORE}..."
+                git -C $(brew --repo homebrew/core) fetch --depth 1 origin ${SF_BOOTSTRAP_VERSION_LINUXBREW_CORE}
                 git -C $(brew --repo homebrew/core) checkout ${SF_BOOTSTRAP_VERSION_LINUXBREW_CORE}
                 echo_done
             }
