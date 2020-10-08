@@ -7,8 +7,6 @@ awscli
 EOF
 )"
 brew_install "${BREW_FORMULAE}"
-# see https://github.com/Homebrew/linuxbrew-core/issues/21062
-brew uninstall awscli && brew install awscli
 unset BREW_FORMULAE
 aws configure set s3.signature_version s3v4
 echo_done
