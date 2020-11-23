@@ -77,13 +77,6 @@ ARTIFACT=.ci.sh
     echo_info "Created ${ARTIFACT}."
 }
 
-ARTIFACT=.travis.yml
-[[ -e ${ARTIFACT} ]] || {
-    cp ${SUPPORT_FIRECLOUD_DIR_REL}/repo/dot.travis.yml ${ARTIFACT}
-    ARTIFACTS="${ARTIFACTS}\\n${ARTIFACT}"
-    echo_info "Created ${ARTIFACT}."
-}
-
 [[ -e .github ]] || {
     mkdir -p .github
     for ARTIFACT in ${SUPPORT_FIRECLOUD_DIR_REL}/repo/dot.github/* ${SUPPORT_FIRECLOUD_DIR_REL}/repo/dot.github/.*; do

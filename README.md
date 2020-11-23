@@ -1,4 +1,4 @@
-# support-firecloud [![Travis CI Status][2]][1]
+# support-firecloud [![Github Actions CI Status][2]][1]
 
 `support-firecloud` is software and configuration that supports various cycles of software development:
 * as a standalone checkout, it provides
@@ -11,13 +11,13 @@
 * as a submodule checkout, it provides
   * bootstrapping for a CI machine
     * the bootstrapping is so generic that it is very easy to use `support-firecloud` in a multitude of CI solutions
-      * `Travis CI________` [![Travis CI Status][2]][1]
-      * `CircleCI_________` [![CircleCI Status][4]][3]
-      * `Github Actions CI` [![Github Actions CI Status][6]][5]
-      * `Codeship_________` [![Codeship Status][8]][7]
-      * `Semaphore________` [![Semaphore Status][10]][9]
-      * `Gitlab CI________` [![Gitlab CI Status][12]][11]
       * `AppVeyor_________` [![AppVeyor Status][14]][13]
+      * `CircleCI_________` [![CircleCI Status][4]][3]
+      * `Codeship_________` [![Codeship Status][8]][7]
+      * `Github Actions CI` [![Github Actions CI Status][1]][2]
+      * `Gitlab CI________` [![Gitlab CI Status][12]][11]
+      * `Semaphore________` [![Semaphore Status][10]][9]
+      * `Travis CI________` [![Travis CI Status][6]][5]
   * a robust yet flexible build system based on GNU Make
   * an AWS CloudFormation build system based on GNU Make
   * common per-repo configuration (e.g. vscode)
@@ -84,12 +84,12 @@ This initially supported [TobiiPro's Cloud Services development](https://github.
 [Apache-2.0](LICENSE)
 
 
-  [1]: https://travis-ci.com/rokmoln/support-firecloud
-  [2]: https://travis-ci.com/rokmoln/support-firecloud.svg?branch=master
+  [1]: https://github.com/rokmoln/support-firecloud/actions?query=workflow%3ACI+branch%3Amaster
+  [2]: https://github.com/rokmoln/support-firecloud/workflows/CI/badge.svg?branch=master
   [3]: https://circleci.com/gh/rokmoln/support-firecloud/tree/master
   [4]: https://circleci.com/gh/rokmoln/support-firecloud/tree/master.svg?style=svg
-  [5]: https://github.com/rokmoln/support-firecloud/actions?query=workflow%3ACI+branch%3Amaster
-  [6]: https://github.com/rokmoln/support-firecloud/workflows/CI/badge.svg?branch=master
+  [5]: https://travis-ci.com/rokmoln/support-firecloud
+  [6]: https://travis-ci.com/rokmoln/support-firecloud.svg?branch=master
   [7]: https://app.codeship.com/projects/388210
   [8]: https://app.codeship.com/projects/8fe9ad00-438f-0138-d313-2e664bcb50ed/status?branch=master
   [9]: https://rokmoln.semaphoreci.com/branches/3afa32fb-b027-4a02-8e99-8a4ba73dac12

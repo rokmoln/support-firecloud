@@ -1,0 +1,178 @@
+# 1. Notifications
+# notifications:
+
+# 2. Env
+env:
+  global:
+    - SF_LOG_BOOTSTRAP=true
+
+# 3. Git
+branches:
+  only:
+    - /^travis/ # travis branches
+    - master
+    - /^v(\d+)\.(\d+)\.(\d+)/ # version tags
+
+# 4. Bootstrap
+# os: linux
+# dist: xenial
+language: generic
+# addons:
+before_cache: ./.ci.sh before_cache
+cache:
+  directories:
+    # common
+    - $HOME/.local
+    - $HOME/.npm
+    # darwin
+    - $HOME/Library/Caches/Homebrew
+    - $HOME/Library/Caches/pip
+    # linux
+    - $HOME/.cache/Homebrew
+    - $HOME/.cache/pip
+    # windows
+    - $HOME/AppData/Local/Temp/chocolatey
+
+# 5. Steps
+before_install: ./.ci.sh before_install
+install: ./.ci.sh install
+before_script: ./.ci.sh before_script
+script: ./.ci.sh script
+after_success: ./.ci.sh after_success
+after_failure: ./.ci.sh after_failure
+after_script: ./.ci.sh after_script
+
+# 6. Deploy
+before_deploy: ./.ci.sh before_deploy
+deploy:
+  provider: script
+  script: ./.ci.sh deploy
+  skip_cleanup: true
+  on:
+    tags: true
+after_deploy: ./.ci.sh after_deploy
+
+stages:
+  - name: test
+    if: type IN (push, cron) OR commit_message =~ /ci\-push/
+  - name: test-cron
+    if: type IN (cron) OR commit_message =~ /ci\-cron/
+  - name: test-pr
+    if: type IN (pull_request) OR commit_message =~ /ci\-pr/ OR commit_message =~ /ci\-pull\-request/
+  - name: publish
+    if: type IN (push) AND tag IS present
+
+jobs:
+  include:
+# test --------------------------------------------------------------------------
+
+    - &stage-linux-xenial-minimal
+      stage: test
+      name: "Linux Xenial 16.04 with minimal brew"
+      os: linux
+      dist: xenial
+      env: CACHE_NAME=linux-xenial-minimal SF_CI_BREW_INSTALL=minimal
+
+    - &stage-linux-xenial-dev
+      stage: test
+      name: "Linux Xenial 16.04 with dev (common+) brew"
+      os: linux
+      dist: xenial
+      env: CACHE_NAME=linux-xenial-dev SF_CI_BREW_INSTALL=dev
+
+    - &stage-linux-bionic-minimal
+      stage: test
+      name: "Linux Bionic 18.04 with minimal brew"
+      os: linux
+      dist: bionic
+      env: CACHE_NAME=linux-bionic-minimal SF_CI_BREW_INSTALL=minimal
+
+    - &stage-linux-bionic-dev
+      stage: test
+      name: "Linux Bionic 18.04 with dev (common+) brew"
+      os: linux
+      dist: bionic
+      env: CACHE_NAME=linux-bionic-dev SF_CI_BREW_INSTALL=dev
+
+    - &stage-linux-focal-minimal
+      stage: test
+      name: "Linux Focal 20.04 with minimal brew"
+      os: linux
+      dist: focal
+      env: CACHE_NAME=linux-focal-minimal SF_CI_BREW_INSTALL=minimal
+
+    - &stage-linux-focal-dev
+      stage: test
+      name: "Linux Focal 20.04 with dev (common+) brew"
+      os: linux
+      dist: focal
+      env: CACHE_NAME=linux-focal-dev SF_CI_BREW_INSTALL=dev
+
+# test-cron --------------------------------------------------------------------
+
+    - &stage-osx-xcode11-3-dev
+      stage: test-cron
+      name: "OSX Mojave 10.14 (Xcode 11.3) with dev (common+) brew"
+      os: osx
+      osx_image: xcode11.3
+      env: CACHE_NAME=osx-xcode11-3-dev SF_CI_BREW_INSTALL=dev
+
+    - &stage-osx-xcode12-dev
+      stage: test-cron
+      name: "OSX Catalina 10.15 (Xcode 12) with dev (common+) brew"
+      os: osx
+      osx_image: xcode12
+      env: CACHE_NAME=osx-xcode12-dev SF_CI_BREW_INSTALL=dev
+
+    - &stage-wsl-linux-bionic-minimal
+      stage: test-cron
+      name: "Windows Server 1809 (WSL) with Linux Bionic 18.04 with minimal brew"
+      os: windows
+      env: CACHE_NAME=wsl-linux-bionic-minimal SF_CI_BREW_INSTALL=minimal WSLENV=CI:SF_CI_BREW_INSTALL:SF_LOG_BOOTSTRAP
+      language: shell # leaving it to "generic" would cause the machine not to boot
+      git:
+        autocrlf: false
+        symlinks: true
+      before_install:
+        # why --ignore-checksum? see https://chocolatey.org/packages/wsl-ubuntu-1804#comment-5026624059
+        - choco install wsl-ubuntu-1804 --yes --no-progress --ignore-checksum
+        - wsl bash -c "cat /etc/os-release"
+        - wsl bash -c "sudo addgroup --gid 2000 travis"
+        - wsl bash -c "sudo adduser --uid 2000 --ingroup travis --home /home/travis --shell /bin/bash --disabled-password --gecos \"\" travis"
+        - wsl bash -c "sudo adduser travis sudo"
+        - wsl bash -c "sudo echo \"travis ALL=(ALL) NOPASSWD:ALL\" >> /etc/sudoers"
+        - wsl bash -c "sudo echo \"Defaults:travis !env_reset\" >> /etc/sudoers"
+        - wsl bash -c "sudo echo \"Defaults:travis !secure_path\" >> /etc/sudoers"
+        # Use wsl.conf to fix error: chmod on .git/config.lock failed: Operation not permitted
+        # See https://gist.github.com/shakahl/8b6c969768b3a54506c0fc4905d729a0
+        - wsl bash -c "sudo cp priv/wsl.conf /etc/wsl.conf && sudo chmod 0644 /etc/wsl.conf"
+        # Run 'git status' to work around  a bug that will show all files as empty 0000000000000000000000000000000000000000
+        # See https://gitlab.com/tortoisegit/tortoisegit/-/issues/3380
+        - wsl --user travis bash -c "git status"
+        # NOTE TRAVIS_BUILD_DIR will be pointing to the wrong folder under WSL
+        - WSLENV=${WSLENV}:$(bin/travis-get-env-vars --wslenv) wsl --user travis ./.ci.sh before_install
+      install: WSLENV=${WSLENV}:$(bin/travis-get-env-vars --wslenv) wsl --user travis ./.ci.sh install
+      before_script: WSLENV=${WSLENV}:$(bin/travis-get-env-vars --wslenv) wsl --user travis ./.ci.sh before_script
+      script: WSLENV=${WSLENV}:$(bin/travis-get-env-vars --wslenv) wsl --user travis ./.ci.sh script
+      after_success: WSLENV=${WSLENV}:$(bin/travis-get-env-vars --wslenv) wsl --user travis ./.ci.sh after_success
+      after_failure: WSLENV=${WSLENV}:$(bin/travis-get-env-vars --wslenv) wsl --user travis ./.ci.sh after_failure
+      after_script: WSLENV=${WSLENV}:$(bin/travis-get-env-vars --wslenv) wsl --user travis ./.ci.sh after_script
+
+# test-pr -----------------------------------------------------------------------
+
+    - <<: *stage-linux-xenial-minimal
+      stage: test-pr
+
+# publish -----------------------------------------------------------------------
+
+    - <<: *stage-linux-xenial-minimal
+      stage: publish
+
+    - <<: *stage-linux-xenial-dev
+      stage: publish
+
+    - <<: *stage-linux-bionic-minimal
+      stage: publish
+
+    - <<: *stage-linux-bionic-dev
+      stage: publish
