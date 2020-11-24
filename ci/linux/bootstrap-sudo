@@ -82,6 +82,8 @@ apt_install "${DPKGS}"
 unset DPKGS
 echo_done
 
+[[ -e /usr/bin/python ]] || ln -s /usr/bin/python3 /usr/bin/python
+
 echo_do "aptitude: Listing packages..."
 apt list --installed
 echo_done
