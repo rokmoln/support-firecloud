@@ -16,26 +16,34 @@ aliases:
     SF_PRINTENV_BOOTSTRAP: ${{ secrets.SF_PRINTENV_BOOTSTRAP }}
     TRANSCRYPT_PASSWORD: ${{ secrets.TRANSCRYPT_PASSWORD }}
     V: ${{ secrets.V }}
-    WSLENV: 'CI:SF_CI_BREW_INSTALL:SF_LOG_BOOTSTRAP'
+  git-crlf: &git-crlf # needed on windows
+    name: Set up git (autocrlf, eol)
+    shell: bash
+    run: |
+      git config --global core.autocrlf false
+      git config --global core.eol lf
+  fix-homebrew: &fix-homebrew
+    name: Fix dirty homebrew. See https://github.com/actions/virtual-environments/issues/1568
+    shell: bash
+    run: |
+      set -x
+      sudo git -C $(brew --prefix)/Homebrew diff || true
+      sudo git -C $(brew --prefix)/Homebrew checkout HEAD .
+      sudo git -C $(brew --prefix)/Homebrew/Library/Taps/homebrew/homebrew-core diff || true
+      sudo git -C $(brew --prefix)/Homebrew/Library/Taps/homebrew/homebrew-core checkout HEAD .
   checkout: &checkout
     # run: /support-firecloud/repo/dot.ci.sh sf_ga_checkout
     uses: actions/checkout@v2
   checkout-submodules: &checkout-submodules
-    name: Run actions/checkout@v2 submodules
+    name: Run actions/checkout@v2 (submodules)
     shell: bash
     run: |
       auth_header="$(git config --local --get http.https://github.com/.extraheader)"
       git submodule sync --recursive
       git -c "http.extraheader=$auth_header" -c protocol.version=2 \
       submodule update --init --force --recursive --depth=1
-  notify-slack: &notify-slack
-    shell: bash
-    env:
-      SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-      SLACK_CHANNEL: cloud-ci
-      CI_STATUS: ${{ job.status }}
-    run: ./.ci.sh notifications || true
-    if: always()
+
+# ------------------------------------------------------------------------------
 
 jobs:
   main:
@@ -48,35 +56,73 @@ jobs:
           - ubuntu-20.04
           - macos-10.15
           - macos-11.0
-          - windows-2019
         sf_ci_brew_install:
           - minimal
           - dev
-        exclude:
-          # too time consuming
-          - os: windows-2019
-            sf_ci_brew_install: dev
     name: main-${{ matrix.os }}-${{ matrix.sf_ci_brew_install }}
     runs-on: ${{ matrix.os }}
     env:
       <<: *env
     steps:
-      - name: Ubuntu
-        shell: bash
-        run: |
-          # see https://github.com/actions/virtual-environments/issues/1568
-          set -x
-          sudo git -C $(brew --prefix)/Homebrew diff || true
-          sudo git -C $(brew --prefix)/Homebrew checkout HEAD .
-          sudo git -C $(brew --prefix)/Homebrew/Library/Taps/homebrew/homebrew-core diff || true
-          sudo git -C $(brew --prefix)/Homebrew/Library/Taps/homebrew/homebrew-core checkout HEAD .
-        if: startsWith(matrix.os, 'ubuntu-')
+      - *fix-homebrew
+      - *checkout
+      - *checkout-submodules
 
-      - name: Windows
+      - shell: bash
+        run: ./.ci.sh before_install
+
+      - shell: bash
+        run: ./.ci.sh install
+
+      - shell: bash
+        run: ./.ci.sh before_script
+
+      - shell: bash
+        run: ./.ci.sh script
+
+      - shell: bash
+        run: ./.ci.sh after_failure || true
+        if: failure()
+
+      - shell: bash
+        run: ./.ci.sh after_success || true
+
+      - shell: bash
+        run: ./.ci.sh after_script || true
+        if: always()
+
+      - shell: bash
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          SLACK_CHANNEL: cloud-ci
+          CI_STATUS: ${{ job.status }}
+        run: ./.ci.sh notifications || true
+        if: always()
+
+# ------------------------------------------------------------------------------
+
+  main-windows:
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - windows-2019
+        sf_ci_brew_install:
+          - minimal
+          # - dev # too time consuming
+    name: main-${{ matrix.os }}-${{ matrix.sf_ci_brew_install }}
+    runs-on: ${{ matrix.os }}
+    env:
+      <<: *env
+      WSLENV: '${ENVSUBST_WSLENV}'
+    steps:
+      - *git-crlf
+      - *checkout
+      - *checkout-submodules
+
+      - name: Set up WSL
         shell: bash
         run: |
-          git config --global core.autocrlf false
-          git config --global core.eol lf
           # why --ignore-checksum? see https://chocolatey.org/packages/wsl-ubuntu-1804#comment-5026624059
           choco install wsl-ubuntu-1804 --yes --no-progress --ignore-checksum
           wsl bash -c "cat /etc/os-release"
@@ -84,97 +130,42 @@ jobs:
           wsl bash -c "sudo adduser --uid 2000 --ingroup github --home /home/github --shell /bin/bash --disabled-password --gecos \"\" github"
           wsl bash -c "sudo adduser github sudo"
           wsl bash -c "sudo echo \"github ALL=(ALL) NOPASSWD:ALL\" >> /etc/sudoers"
-        if: startsWith(matrix.os, 'windows-')
-
-      - uses: actions/checkout@v2
-      - name: Run actions/checkout@v2 submodules
-        shell: bash
-        run: |
-          auth_header="$(git config --local --get http.https://github.com/.extraheader)"
-          git submodule sync --recursive
-          git -c "http.extraheader=$auth_header" -c protocol.version=2 \
-          submodule update --init --force --recursive --depth=1
-
-      - name: Windows
-        shell: bash
-        run: |
           # Use wsl.conf to fix error: chmod on .git/config.lock failed: Operation not permitted
           # See https://gist.github.com/shakahl/8b6c969768b3a54506c0fc4905d729a0
           wsl bash -c "sudo cp priv/wsl.conf /etc/wsl.conf && sudo chmod 0644 /etc/wsl.conf"
-        if: startsWith(matrix.os, 'windows-')
 
-      - name: before_install
-        shell: bash
-        run: |
-          if echo "${GITHUB_MATRIX_OS}" | grep -q "^windows\-"; then
-            wsl --user github bash -c "./.ci.sh before_install"
-          else
-            ./.ci.sh before_install
-          fi
+      - shell: bash
+        run: wsl --user github bash -c "./.ci.sh before_install"
 
-      - name: install
-        shell: bash
-        run: |
-          if echo "${GITHUB_MATRIX_OS}" | grep -q "^windows\-"; then
-            wsl --user github bash -c "./.ci.sh install"
-          else
-            ./.ci.sh install
-          fi
+      - shell: bash
+        run: wsl --user github bash -c "./.ci.sh install"
 
-      - name: before_script
-        shell: bash
-        run: |
-          if echo "${GITHUB_MATRIX_OS}" | grep -q "^windows\-"; then
-            wsl --user github bash -c "./.ci.sh before_script"
-          else
-            ./.ci.sh before_script
-          fi
+      - shell: bash
+        run: wsl --user github bash -c "./.ci.sh before_script"
 
-      - name: script
-        shell: bash
-        run: |
-          if echo "${GITHUB_MATRIX_OS}" | grep -q "^windows\-"; then
-            wsl --user github bash -c "./.ci.sh script"
-          else
-            ./.ci.sh script
-          fi
+      - shell: bash
+        run: wsl --user github bash -c "./.ci.sh script"
 
-      - name: after_failure
-        shell: bash
-        run: |
-          if echo "${GITHUB_MATRIX_OS}" | grep -q "^windows\-"; then
-            wsl --user github bash -c "./.ci.sh after_failure || true"
-          else
-            ./.ci.sh after_failure || true
-          fi
+      - shell: bash
+        run: wsl --user github bash -c "./.ci.sh after_failure || true"
         if: failure()
 
-      - name: after_success
-        shell: bash
-        run: |
-          if echo "${GITHUB_MATRIX_OS}" | grep -q "^windows\-"; then
-            wsl --user github bash -c "./.ci.sh after_success || true"
-          else
-            ./.ci.sh after_success || true
-          fi
+      - shell: bash
+        run: wsl --user github bash -c "./.ci.sh after_success || true"
 
-      - name: after_script
-        shell: bash
-        run: |
-          if echo "${GITHUB_MATRIX_OS}" | grep -q "^windows\-"; then
-            wsl --user github bash -c "./.ci.sh after_script || true"
-          else
-            ./.ci.sh after_script || true
-          fi
+      - shell: bash
+        run: wsl --user github bash -c "./.ci.sh after_script || true"
         if: always()
 
-      # - shell: bash
-      #   run: |
-      #     ./.ci.sh before_deploy
-      #     ./.ci.sh deploy
-      #     ./.ci.sh after_deploy
-      #   if: startsWith(github.ref, "refs/tags/v")
-      - *notify-slack
+      - shell: bash
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          SLACK_CHANNEL: cloud-ci
+          CI_STATUS: ${{ job.status }}
+        run: wsl --user github bash -c "./.ci.sh notifications || true"
+        if: always()
+
+# ------------------------------------------------------------------------------
 
   # deploy:
   #   needs: main
