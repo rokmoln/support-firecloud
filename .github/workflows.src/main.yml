@@ -47,6 +47,7 @@ aliases:
 
 jobs:
   main:
+    timeout-minutes: 30
     strategy:
       fail-fast: false
       matrix:
@@ -102,6 +103,7 @@ jobs:
 # ------------------------------------------------------------------------------
 
   main-windows:
+    timeout-minutes: 30
     strategy:
       fail-fast: false
       matrix:

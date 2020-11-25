@@ -9,6 +9,7 @@ name: CI
       - v*
 jobs:
   main:
+    timeout-minutes: 30
     strategy:
       fail-fast: false
       matrix:
@@ -72,6 +73,7 @@ jobs:
         run: ./.ci.sh notifications || true
         if: always()
   main-windows:
+    timeout-minutes: 30
     strategy:
       fail-fast: false
       matrix:
