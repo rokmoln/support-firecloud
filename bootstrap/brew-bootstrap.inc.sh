@@ -82,6 +82,7 @@ function bootstrap_brew() {
                     tar xz --strip 1 -C ${HOMEBREW_PREFIX}
                 echo_done
             else
+                export SUDO_ASKPASS=false
                 </dev/null /bin/bash -c "$(curl -fqsS -L ${BREW_INSTALL_URL}/install.sh)"
             fi
             echo_done
