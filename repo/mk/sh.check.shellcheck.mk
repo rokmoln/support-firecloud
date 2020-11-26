@@ -51,6 +51,7 @@ SF_CHECK_TARGETS += \
 .PHONY: check-shellcheck
 check-shellcheck:
 	SF_SHELLCHECK_FILES_TMP=($(SF_SHELLCHECK_FILES)); \
+	echo $${SF_SHELLCHECK_FILES_TMP[@]}; \
 	[[ "$${#SF_SHELLCHECK_FILES_TMP[@]}" = "0" ]] || { \
 		$(SHELLCHECK) $(SHELLCHECK_ARGS) $${SF_SHELLCHECK_FILES_TMP[@]}; \
 	}
