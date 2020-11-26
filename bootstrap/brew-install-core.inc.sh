@@ -16,6 +16,7 @@ findutils
 git
 jq
 make
+shellcheck
 unzip
 zip
 EOF

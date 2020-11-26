@@ -6,6 +6,7 @@ endif
 endif
 
 include support-firecloud/repo/mk/generic.common.mk
+include support-firecloud/repo/mk/sh.check.shellcheck.mk
 include support-firecloud/repo/mk/js.deps.npm.mk
 include support-firecloud/repo/mk/js.check.eslint.mk
 include support-firecloud/repo/mk/core.misc.release.tag.mk
@@ -52,6 +53,9 @@ SF_ECLINT_FILES_IGNORE += \
 	-e "^repo/LICENSE$$" \
 	-e "^repo/UNLICENSE$$" \
 	-e "^support-firecloud$$" \
+
+SF_SHELLCHECK_FILES_IGNORE += \
+	-e "^doc/ci\-sh\.md$$" \
 
 SF_CHECK_TPL_FILES += \
 	.github/workflows/main.yml \
