@@ -39,7 +39,7 @@ SF_SHELLCHECK_FILES += $(shell $(GIT_LS) . | \
 		[[ ! -L "$${FILE}" ]] || continue; \
 		[[ -f "$${FILE}" ]] || continue; \
 		[[ -x "$${FILE}" ]] || continue; \
-		$(HEAD) -n1 "$${FILE}" | $(GREP) "\#" | $(GREP) -q -e "\b\(bash\|sh\)\b" || continue; \
+		$(HEAD) -n1 "$${FILE}" | $(GREP) "^#\!/" | $(GREP) -q -e "\b\(bash\|sh\)\b" || continue; \
 		$(ECHO) "'$${FILE}'"; \
 	done)
 
