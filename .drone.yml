@@ -1,0 +1,44 @@
+kind: pipeline
+type: exec
+name: main
+
+platform:
+  os: linux
+  arch: amd64
+
+trigger:
+  branch:
+    - master
+    - drone*
+
+steps:
+  - name: .ci.sh before_install
+    commands:
+      - .ci.sh before_install
+  - name: .ci.sh install
+    commands:
+      - .ci.sh install
+  - name: .ci.sh before_script
+    commands:
+      - .ci.sh before_script
+  - name: .ci.sh script
+    commands:
+      - .ci.sh script
+  - name: .ci.sh after_failure
+    commands:
+      - .ci.sh after_failure
+    when:
+      status:
+        - failure
+    failure: ignore
+  - name: .ci.sh after_success
+    commands:
+      - .ci.sh after_success
+    when:
+      status:
+        - success
+    failure: ignore
+  - name: .ci.sh after_script
+    commands:
+      - .ci.sh after_script
+    failure: ignore

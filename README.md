@@ -30,6 +30,7 @@ Import this repository as a `submodule`, and you will gain access to:
       * `CircleCI_________` [![CircleCI Status][4]][3]
       * `Cirrus CI________` [![Cirrus CI Status][16]][15]
       * `Codeship_________` [![Codeship Status][8]][7]
+      * `Drone CI_________` [![Drone CI Status][18]][17]
       * `Github Actions CI` [![Github Actions CI Status][2]][1]
       * `Gitlab CI________` [![Gitlab CI Status][12]][11]
       * `Semaphore________` [![Semaphore Status][10]][9]
@@ -133,3 +134,7 @@ TODO
   [14]: https://ci.appveyor.com/api/projects/status/da744jauw31fi66h/branch/master?svg=true
   [15]: https://cirrus-ci.com/github/rokmoln/support-firecloud/master
   [16]: https://api.cirrus-ci.com/github/rokmoln/support-firecloud.svg?branch=master
+  [17]: https://cloud.drone.io/rokmoln/support-firecloud
+  [18]: https://cloud.drone.io/api/badges/rokmoln/support-firecloud/status.svg
+
+[![Build Status]()]()
