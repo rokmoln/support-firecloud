@@ -24,6 +24,9 @@ function brew_install_one_patched() {
     echo_done
 
     echo_do "brew: Installing ${NAME} from ${PATCHED}..."
+    set -x
+    which -a brew
+    cat ${PATCHED}
     brew_install_one_core ${PATCHED} ${OPTIONS}
     echo_done
 }
